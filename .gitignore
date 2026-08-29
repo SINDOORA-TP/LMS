@@ -1,0 +1,45 @@
+# General
+.DS_Store
+*.zip
+*.tar.gz
+*.rar
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Firebase & Security
+*firebase*.json
+google-services.json
+GoogleService-Info.plist
+*.pem
+*.key
+backend/config/firebase.json
+
+# Laravel Backend
+backend/vendor/
+backend/node_modules/
+backend/public/storage
+backend/storage/*.key
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/testing/*
+backend/storage/framework/views/*
+backend/storage/logs/*
+backend/storage/app/public/*
+backend/phpunit.xml
+
+# Flutter Frontend
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.pub-cache/
+frontend/.pub/
+frontend/build/
+frontend/app.db
+*.apk
+*.aab
+*.keystore
+*.jks
+android/key.properties
