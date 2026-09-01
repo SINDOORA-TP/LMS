@@ -1,52 +1,50 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
-import '../config/api_config.dart';
+import 'api_service.dart';
 
 class SecurityService {
-  final _storage = const FlutterSecureStorage();
+  final ApiService _api = ApiService();
+  bool _isHandlingViolation = false;
 
   Future<void> reportSecurityViolation(String violationType) async {
     try {
-      final token = await _storage.read(key: 'auth_token');
-      if (token == null) return; // Can't report without auth
-
-      final response = await http.post(
-        Uri.parse('${ApiConfig.baseUrl}/security-violation'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+      final response = await _api.post(
+        '/security-violation',
+        body: {'violation_type': violationType},
       );
 
-      if (response.statusCode == 200) {
-        print('Security violation reported: $violationType');
+      if (response.success) {
+        print('Security violation reported to admin: $violationType');
+      } else {
+        print('Failed to report violation: ${response.message}');
       }
     } catch (e) {
-      print('Failed to report security violation: $e');
+      print('Error reporting security violation: $e');
     }
   }
 
   void handleViolation(String type) async {
+    // Prevent multiple simultaneous violation handlers
+    if (_isHandlingViolation) return;
+    _isHandlingViolation = true;
+
     print('SECURITY VIOLATION DETECTED: $type');
-    
-    // Show toast message to user
+
+    // Show warning to user
     Fluttertoast.showToast(
-      msg: "Security Violation: Screen capture is not allowed.",
+      msg: "Security Violation: Screen capture is not allowed!",
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.CENTER,
     );
 
-    // Report to backend
+    // Report to backend (admin will see this in the panel)
     await reportSecurityViolation(type);
 
-    // Delay slightly to let the toast show and request complete, then close app
-    await Future.delayed(const Duration(seconds: 2));
-    
+    // Brief delay so toast shows and network request completes
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    // Exit the app
     if (Platform.isAndroid) {
       SystemNavigator.pop();
     } else {

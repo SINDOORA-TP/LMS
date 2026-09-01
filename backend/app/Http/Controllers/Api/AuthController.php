@@ -124,8 +124,20 @@ class AuthController extends Controller
     public function reportSecurityViolation(Request $request): JsonResponse
     {
         $user = $request->attributes->get('user');
+        $violationType = $request->input('violation_type', 'Screenshot');
 
+        // Increment the counter on the user
         $user->increment('security_violations_count');
+
+        // Log individual violation record for admin panel
+        \App\Models\SecurityViolation::create([
+            'user_id'        => $user->id,
+            'user_name'      => $user->name,
+            'user_email'     => $user->email,
+            'violation_type' => $violationType,
+            'ip_address'     => $request->ip(),
+            'device_info'    => $request->header('User-Agent'),
+        ]);
 
         return response()->json([
             'success' => true,
