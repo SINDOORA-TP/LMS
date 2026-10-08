@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ModuleController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProgressController;
 use App\Http\Controllers\Api\VideoController;
+use App\Http\Controllers\Api\ZoomController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\FirebaseAuthenticate;
 use App\Http\Middleware\OptionalFirebaseAuth;
@@ -36,6 +37,10 @@ Route::get('/courses/{id}', [CourseController::class, 'show'])
     ->middleware(OptionalFirebaseAuth::class);
 
 Route::get('/courses/{courseId}/modules', [ModuleController::class, 'index']);
+
+// Live classes for a course (public — hides join URL for unenrolled users)
+Route::get('/courses/{courseId}/live-classes', [ZoomController::class, 'index'])
+    ->middleware(OptionalFirebaseAuth::class);
 
 // Payment callback (PhonePe sends here after payment)
 Route::post('/payments/callback', [PaymentController::class, 'callback']);
@@ -67,6 +72,10 @@ Route::middleware(FirebaseAuthenticate::class)->group(function () {
     // Payment Status
     Route::get('/payments/{merchantTransactionId}/status', [PaymentController::class, 'status']);
 
+    // Live Classes
+    Route::get('/live-classes/upcoming', [ZoomController::class, 'upcoming']);
+    Route::get('/live-classes/{id}', [ZoomController::class, 'show']);
+
     // Security
     Route::post('/security-violation', [AuthController::class, 'reportSecurityViolation']);
 });
@@ -95,4 +104,9 @@ Route::middleware([FirebaseAuthenticate::class, AdminMiddleware::class])
         Route::post('/videos', [VideoController::class, 'store']);
         Route::put('/videos/{id}', [VideoController::class, 'update']);
         Route::delete('/videos/{id}', [VideoController::class, 'destroy']);
+
+        // Live Class (Zoom) Management
+        Route::post('/live-classes', [ZoomController::class, 'store']);
+        Route::put('/live-classes/{id}', [ZoomController::class, 'update']);
+        Route::delete('/live-classes/{id}', [ZoomController::class, 'destroy']);
     });

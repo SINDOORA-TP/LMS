@@ -8,6 +8,7 @@ import 'config/theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/course_provider.dart';
 import 'providers/progress_provider.dart';
+import 'providers/zoom_provider.dart';
 
 import 'package:freerasp/freerasp.dart';
 import 'services/security_service.dart';
@@ -71,6 +72,7 @@ class LmsApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => ProgressProvider()),
+        ChangeNotifierProvider(create: (_) => ZoomProvider()),
       ],
       child: MaterialApp.router(
         title: 'LMS - Learning Platform',

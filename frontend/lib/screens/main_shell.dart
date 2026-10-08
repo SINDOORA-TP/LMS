@@ -11,7 +11,8 @@ class MainShell extends StatelessWidget {
   int _getSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
     if (location.startsWith('/my-courses')) return 1;
-    if (location.startsWith('/profile')) return 2;
+    if (location.startsWith('/live-classes')) return 2;
+    if (location.startsWith('/profile')) return 3;
     return 0;
   }
 
@@ -51,9 +52,15 @@ class MainShell extends StatelessWidget {
                   onTap: () => context.go('/my-courses'),
                 ),
                 _NavItem(
+                  icon: Icons.videocam_rounded,
+                  label: 'Live',
+                  isSelected: selectedIndex == 2,
+                  onTap: () => context.go('/live-classes'),
+                ),
+                _NavItem(
                   icon: Icons.person_rounded,
                   label: 'Profile',
-                  isSelected: selectedIndex == 2,
+                  isSelected: selectedIndex == 3,
                   onTap: () => context.go('/profile'),
                 ),
               ],

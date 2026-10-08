@@ -66,6 +66,14 @@ class Course extends Model
     }
 
     /**
+     * Get the Zoom live classes for the course.
+     */
+    public function zoomMeetings(): HasMany
+    {
+        return $this->hasMany(ZoomMeeting::class)->orderBy('scheduled_at', 'desc');
+    }
+
+    /**
      * Recalculate total duration and video count from modules/videos.
      */
     public function recalculateTotals(): void

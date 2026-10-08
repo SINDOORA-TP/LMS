@@ -9,6 +9,7 @@ import '../screens/register/register_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/courses/course_detail_screen.dart';
 import '../screens/my_courses/my_courses_screen.dart';
+import '../screens/live_classes/live_classes_screen.dart';
 import '../screens/video_player/video_player_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/main_shell.dart';
@@ -45,6 +46,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/my-courses',
           builder: (context, state) => const MyCoursesScreen(),
+        ),
+        GoRoute(
+          path: '/live-classes',
+          builder: (context, state) => const LiveClassesScreen(),
         ),
         GoRoute(
           path: '/profile',

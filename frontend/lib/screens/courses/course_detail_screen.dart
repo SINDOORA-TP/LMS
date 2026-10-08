@@ -6,7 +6,9 @@ import '../../models/course.dart';
 import '../../models/module.dart';
 import '../../models/video.dart';
 import '../../providers/course_provider.dart';
+import '../../providers/zoom_provider.dart';
 import '../../services/course_service.dart';
+import '../../widgets/live_class_card.dart';
 
 /// Course detail screen with modules, videos, and enrollment.
 class CourseDetailScreen extends StatefulWidget {
@@ -24,6 +26,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CourseProvider>().loadCourseDetail(widget.courseId);
+      context.read<ZoomProvider>().loadCourseClasses(widget.courseId);
     });
   }
 
@@ -231,6 +234,47 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     ),
                   ),
                 ),
+
+              // Live Classes section
+              SliverToBoxAdapter(
+                child: Consumer<ZoomProvider>(
+                  builder: (context, zoomProvider, _) {
+                    if (zoomProvider.courseClasses.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(20, 20, 20, 8),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.videocam_rounded,
+                                color: AppTheme.accentColor,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                'Live Classes',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        ...zoomProvider.courseClasses.map(
+                          (meeting) => LiveClassCard(meeting: meeting),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                    );
+                  },
+                ),
+              ),
 
               // Description
               SliverToBoxAdapter(
